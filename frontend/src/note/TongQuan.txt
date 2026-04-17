@@ -1,0 +1,8 @@
+Run : cd d:\TT-DNC\WebHocLishSu_Edu\backend
+npm run dev
+
+cd d:\TT-DNC\WebHocLishSu_Edu\frontend
+npm run dev
+
+---------------------
+
