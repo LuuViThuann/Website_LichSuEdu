@@ -18,6 +18,7 @@ import AdminQuiz from './pages/admin/ManageQuiz';
 import AdminDocuments from './pages/admin/ManageDocuments';
 import AdminUsers from './pages/admin/ManageUsers';
 import AdminGrades from './pages/admin/ManageGrades';
+import AdminQuizCategories from './pages/admin/ManageQuizCategories';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -43,6 +44,7 @@ export default function App() {
         {/* Admin */}
         <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/quiz" element={<ProtectedRoute adminOnly><AdminQuiz /></ProtectedRoute>} />
+        <Route path="/admin/quiz-categories" element={<ProtectedRoute adminOnly><AdminQuizCategories /></ProtectedRoute>} />
         <Route path="/admin/documents" element={<ProtectedRoute adminOnly><AdminDocuments /></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute adminOnly><AdminUsers /></ProtectedRoute>} />
         <Route path="/admin/grades" element={<ProtectedRoute adminOnly><AdminGrades /></ProtectedRoute>} />

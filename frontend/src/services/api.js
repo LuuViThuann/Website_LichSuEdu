@@ -33,8 +33,12 @@ export const getMe = () => API.get('/auth/me');
 // Quizzes
 export const getQuizzes = (params) => API.get('/quizzes', { params });
 export const getQuiz = (id) => API.get(`/quizzes/${id}`);
-export const createQuiz = (data) => API.post('/quizzes', data);
-export const updateQuiz = (id, data) => API.put(`/quizzes/${id}`, data);
+export const createQuiz = (formData) => API.post('/quizzes', formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+});
+export const updateQuiz = (id, formData) => API.put(`/quizzes/${id}`, formData, {
+    headers: { 'Content-Type': 'multipart/form-data' }
+});
 export const deleteQuiz = (id) => API.delete(`/quizzes/${id}`);
 export const submitQuiz = (id, data) => API.post(`/quizzes/${id}/submit`, data);
 export const getMyProgress = () => API.get('/quizzes/progress/my');
@@ -55,7 +59,7 @@ export const getAdminStats = () => API.get('/admin/stats');
 export const getUsers = () => API.get('/admin/users');
 export const deleteUser = (id) => API.delete(`/admin/users/${id}`);
 
-// Grades (Public - lấy danh sách lớp đang hoạt động)
+// Grades (Public)
 export const getGrades = () => API.get('/grades');
 
 // Admin Grades (CRUD)
@@ -63,5 +67,14 @@ export const getAdminGrades = () => API.get('/admin/grades');
 export const createGrade = (data) => API.post('/admin/grades', data);
 export const updateGrade = (id, data) => API.put(`/admin/grades/${id}`, data);
 export const deleteGrade = (id) => API.delete(`/admin/grades/${id}`);
+
+// Quiz Categories (Public)
+export const getQuizCategories = () => API.get('/quiz-categories');
+
+// Admin Quiz Categories (CRUD)
+export const getAdminQuizCategories = () => API.get('/admin/quiz-categories');
+export const createQuizCategory = (data) => API.post('/admin/quiz-categories', data);
+export const updateQuizCategory = (id, data) => API.put(`/admin/quiz-categories/${id}`, data);
+export const deleteQuizCategory = (id) => API.delete(`/admin/quiz-categories/${id}`);
 
 export default API;

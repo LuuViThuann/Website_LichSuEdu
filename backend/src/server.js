@@ -25,6 +25,7 @@ app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/grades', require('./routes/grades')); // Public - lấy danh sách lớp
+app.use('/api/quiz-categories', require('./routes/quizCategories')); // Public - danh mục loại đề
 app.use('/api/quizzes', require('./routes/quiz'));
 app.use('/api/documents', require('./routes/documents'));
 app.use('/api/admin', require('./routes/admin'));

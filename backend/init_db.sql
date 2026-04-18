@@ -95,27 +95,55 @@ END
 GO
 
 -- =============================================
+-- Bảng QuizCategories (Danh mục loại đề)
+-- =============================================
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='QuizCategories' AND xtype='U')
+BEGIN
+    CREATE TABLE QuizCategories (
+        id          INT IDENTITY(1,1) PRIMARY KEY,
+        name        NVARCHAR(100)   NOT NULL UNIQUE,   -- 'Thi thử', 'Cuối kì',...
+        description NVARCHAR(300)   DEFAULT '',
+        isActive    BIT             DEFAULT 1,
+        createdAt   DATETIME2       DEFAULT GETDATE()
+    );
+    PRINT '✅ Bảng QuizCategories đã được tạo.';
+
+    -- Seed dữ liệu mặc định
+    INSERT INTO QuizCategories (name, description, isActive) VALUES
+        (N'Thi thử',            N'Đề thi thử trước kỳ thi', 1),
+        (N'Kiểm tra giữa kì',   N'Đề kiểm tra giữa học kỳ', 1),
+        (N'Kiểm tra cuối kì',   N'Đề kiểm tra cuối học kỳ', 1),
+        (N'Thi tốt nghiệp',     N'Đề thi tốt nghiệp THPT Quốc gia', 1),
+        (N'Ôn tập',             N'Đề ôn tập kiến thức', 1),
+        (N'Tổng hợp',           N'Đề tổng hợp nhiều chủ đề', 1);
+    PRINT '✅ Đã seed dữ liệu QuizCategories.';
+END
+GO
+
+-- =============================================
 -- Bảng Quizzes
 -- =============================================
 IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='Quizzes' AND xtype='U')
 BEGIN
     CREATE TABLE Quizzes (
-        id              INT IDENTITY(1,1) PRIMARY KEY,
-        title           NVARCHAR(500)   NOT NULL,
-        description     NVARCHAR(MAX)   DEFAULT '',
-        grade           NVARCHAR(10)    DEFAULT 'mixed', -- '4'→'12' hoặc 'mixed'
-        subject         NVARCHAR(100)   DEFAULT N'Lịch sử',
-        difficulty      NVARCHAR(10)    DEFAULT 'medium'
-                            CHECK (difficulty IN ('easy','medium','hard')),
-        sourceUrl       NVARCHAR(MAX)   DEFAULT '',
-        thumbnail       NVARCHAR(MAX)   DEFAULT '',
-        totalQuestions  INT             DEFAULT 0,
-        duration        INT             DEFAULT 45,
-        isPublished     BIT             DEFAULT 1,
-        attempts        INT             DEFAULT 0,
-        createdBy       INT             FOREIGN KEY REFERENCES Users(id) ON DELETE SET NULL,
-        createdAt       DATETIME2       DEFAULT GETDATE(),
-        updatedAt       DATETIME2       DEFAULT GETDATE()
+        id                  INT IDENTITY(1,1) PRIMARY KEY,
+        title               NVARCHAR(500)   NOT NULL,
+        description         NVARCHAR(MAX)   DEFAULT '',
+        grade               NVARCHAR(10)    DEFAULT 'mixed', -- '4'→'12' hoặc 'mixed'
+        subject             NVARCHAR(100)   DEFAULT N'Lịch sử',
+        difficulty          NVARCHAR(10)    DEFAULT 'medium'
+                                CHECK (difficulty IN ('easy','medium','hard')),
+        categoryId          INT             FOREIGN KEY REFERENCES QuizCategories(id) ON DELETE SET NULL,
+        sourceUrl           NVARCHAR(MAX)   DEFAULT '',
+        thumbnail           NVARCHAR(MAX)   DEFAULT '',
+        thumbnailPublicId   NVARCHAR(500)   DEFAULT '',  -- Cloudinary public_id
+        totalQuestions      INT             DEFAULT 0,
+        duration            INT             DEFAULT 45,
+        isPublished         BIT             DEFAULT 1,
+        attempts            INT             DEFAULT 0,
+        createdBy           INT             FOREIGN KEY REFERENCES Users(id) ON DELETE SET NULL,
+        createdAt           DATETIME2       DEFAULT GETDATE(),
+        updatedAt           DATETIME2       DEFAULT GETDATE()
     );
     PRINT '✅ Bảng Quizzes đã được tạo.';
 END
@@ -252,6 +280,52 @@ IF NOT EXISTS (
 BEGIN
     ALTER TABLE Documents ADD cloudinaryThumbId NVARCHAR(500) DEFAULT '';
     PRINT '✅ Đã thêm cột cloudinaryThumbId vào bảng Documents.';
+END
+GO
+
+-- =============================================
+-- Migration: Thêm bảng QuizCategories (DB đã tồn tại)
+-- =============================================
+IF NOT EXISTS (SELECT * FROM sysobjects WHERE name='QuizCategories' AND xtype='U')
+BEGIN
+    CREATE TABLE QuizCategories (
+        id          INT IDENTITY(1,1) PRIMARY KEY,
+        name        NVARCHAR(100)   NOT NULL UNIQUE,
+        description NVARCHAR(300)   DEFAULT '',
+        isActive    BIT             DEFAULT 1,
+        createdAt   DATETIME2       DEFAULT GETDATE()
+    );
+    INSERT INTO QuizCategories (name, description, isActive) VALUES
+        (N'Thi thử',            N'Đề thi thử trước kỳ thi', 1),
+        (N'Kiểm tra giữa kì',   N'Đề kiểm tra giữa học kỳ', 1),
+        (N'Kiểm tra cuối kì',   N'Đề kiểm tra cuối học kỳ', 1),
+        (N'Thi tốt nghiệp',     N'Đề thi tốt nghiệp THPT Quốc gia', 1),
+        (N'Ôn tập',             N'Đề ôn tập kiến thức', 1),
+        (N'Tổng hợp',           N'Đề tổng hợp nhiều chủ đề', 1);
+    PRINT '✅ Đã thêm bảng QuizCategories vào DB cũ.';
+END
+GO
+
+-- Migration: Thêm cột categoryId vào Quizzes
+IF NOT EXISTS (
+    SELECT 1 FROM sys.columns
+    WHERE object_id = OBJECT_ID('Quizzes') AND name = 'categoryId'
+)
+BEGIN
+    ALTER TABLE Quizzes ADD categoryId INT NULL
+        FOREIGN KEY REFERENCES QuizCategories(id) ON DELETE SET NULL;
+    PRINT '✅ Đã thêm cột categoryId vào bảng Quizzes.';
+END
+GO
+
+-- Migration: Thêm cột thumbnailPublicId vào Quizzes
+IF NOT EXISTS (
+    SELECT 1 FROM sys.columns
+    WHERE object_id = OBJECT_ID('Quizzes') AND name = 'thumbnailPublicId'
+)
+BEGIN
+    ALTER TABLE Quizzes ADD thumbnailPublicId NVARCHAR(500) DEFAULT '';
+    PRINT '✅ Đã thêm cột thumbnailPublicId vào bảng Quizzes.';
 END
 GO
 

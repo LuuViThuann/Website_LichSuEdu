@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getQuiz, submitQuiz } from '../services/api';
 import toast from 'react-hot-toast';
-import { FiClock, FiCheck, FiX, FiFlag, FiChevronLeft, FiChevronRight, FiSend } from 'react-icons/fi';
+import { FiClock, FiCheck, FiX, FiFlag, FiChevronLeft, FiChevronRight, FiSend, FiTag } from 'react-icons/fi';
 
 export default function QuizDetail() {
   const { id } = useParams();
@@ -75,12 +75,51 @@ export default function QuizDetail() {
           background: 'white', borderRadius: 20, border: '1px solid var(--border)',
           boxShadow: 'var(--shadow)', overflow: 'hidden'
         }}>
-          <div style={{ background: 'linear-gradient(135deg, var(--primary-dark), var(--primary))', padding: '36px 40px', color: 'white' }}>
-            <div style={{ fontSize: '0.85rem', opacity: 0.7, marginBottom: 8 }}>BÀI KIỂM TRA LỊCH SỬ</div>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', marginBottom: 4, lineHeight: 1.3 }}>{quiz.title}</h1>
-            {quiz.description && <p style={{ opacity: 0.8, fontSize: '0.95rem', marginTop: 10 }}>{quiz.description}</p>}
-          </div>
+          {/* Thumbnail header */}
+          {quiz.thumbnail ? (
+            <div style={{ position: 'relative', width: '100%', height: 200, overflow: 'hidden' }}>
+              <img src={quiz.thumbnail} alt={quiz.title}
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <div style={{
+                position: 'absolute', inset: 0,
+                background: 'linear-gradient(to bottom, rgba(0,0,0,0.1) 0%, rgba(21,101,192,0.85) 100%)',
+                display: 'flex', flexDirection: 'column', justifyContent: 'flex-end', padding: '28px 32px'
+              }}>
+                <div style={{ fontSize: '0.82rem', opacity: 0.8, color: 'white', marginBottom: 6 }}>BÀI KIỂM TRA LỊCH SỬ</div>
+                <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.7rem', color: 'white', lineHeight: 1.3 }}>{quiz.title}</h1>
+                {quiz.categoryName && (
+                  <span style={{
+                    display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8,
+                    background: 'rgba(255,255,255,0.2)', color: 'white',
+                    padding: '4px 12px', borderRadius: 20, fontSize: '0.82rem', fontWeight: 600,
+                    backdropFilter: 'blur(4px)'
+                  }}>
+                    <FiTag size={12} /> {quiz.categoryName}
+                  </span>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div style={{ background: 'linear-gradient(135deg, var(--primary-dark), var(--primary))', padding: '36px 40px', color: 'white' }}>
+              <div style={{ fontSize: '0.85rem', opacity: 0.7, marginBottom: 8 }}>BÀI KIỂM TRA LỊCH SỬ</div>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', marginBottom: 4, lineHeight: 1.3 }}>{quiz.title}</h1>
+              {quiz.categoryName && (
+                <span style={{
+                  display: 'inline-flex', alignItems: 'center', gap: 5, marginTop: 8,
+                  background: 'rgba(255,255,255,0.15)', color: 'white',
+                  padding: '4px 12px', borderRadius: 20, fontSize: '0.82rem', fontWeight: 600
+                }}>
+                  <FiTag size={12} /> {quiz.categoryName}
+                </span>
+              )}
+              {quiz.description && <p style={{ opacity: 0.8, fontSize: '0.95rem', marginTop: 10 }}>{quiz.description}</p>}
+            </div>
+          )}
+
           <div style={{ padding: '32px 40px' }}>
+            {quiz.thumbnail && quiz.description && (
+              <p style={{ color: 'var(--text-secondary)', marginBottom: 20, fontSize: '0.95rem' }}>{quiz.description}</p>
+            )}
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 28 }}>
               {[
                 { label: 'Số câu hỏi', value: `${quiz.totalQuestions} câu` },
@@ -210,7 +249,7 @@ export default function QuizDetail() {
 
           {/* Question grid sidebar */}
           <div style={{
-            width: 240, background: 'white', borderLeft: '1px solid var(--border)',
+            width: 300, background: 'white', borderLeft: '1px solid var(--border)',
             padding: '20px 16px', overflow: 'auto', flexShrink: 0
           }}>
             <div style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: 14 }}>

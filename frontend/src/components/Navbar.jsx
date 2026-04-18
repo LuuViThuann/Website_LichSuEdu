@@ -46,14 +46,15 @@ export default function Navbar() {
         {/* Logo */}
         <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: 10, flexShrink: 0 }}>
           <div style={{
-            width: 38, height: 38, borderRadius: 10,
+            width: 42, height: 42, borderRadius: 12,
             background: 'linear-gradient(135deg, var(--primary), var(--primary-light))',
-            display: 'flex', alignItems: 'center', justifyContent: 'center'
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            boxShadow: '0 2px 8px rgba(21,101,192,0.25)'
           }}>
-            <FiBook color="white" size={18} />
+            <FiBook color="white" size={20} />
           </div>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', color: 'var(--primary)', fontWeight: 700 }}>
-            History<span style={{ color: 'var(--accent)' }}>Edu</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.3rem', color: 'var(--primary)', fontWeight: 800, letterSpacing: '-0.3px' }}>
+            HocSu<span style={{ color: 'var(--accent)' }}>Edu</span>
           </span>
         </Link>
 

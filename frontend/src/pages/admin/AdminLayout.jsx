@@ -2,12 +2,13 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   FiHome, FiClipboard, FiBook, FiUsers, FiBarChart2,
-  FiLogOut, FiChevronRight, FiLayers
+  FiLogOut, FiChevronRight, FiLayers, FiTag
 } from 'react-icons/fi';
 
 const NAV = [
   { to: '/admin', label: 'Tổng quan', icon: <FiBarChart2 /> },
   { to: '/admin/quiz', label: 'Quản lý đề thi', icon: <FiClipboard /> },
+  { to: '/admin/quiz-categories', label: 'Danh mục đề', icon: <FiTag /> },
   { to: '/admin/documents', label: 'Quản lý tài liệu', icon: <FiBook /> },
   { to: '/admin/users', label: 'Quản lý người dùng', icon: <FiUsers /> },
   { to: '/admin/grades', label: 'Quản lý lớp học', icon: <FiLayers /> },

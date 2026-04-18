@@ -5,6 +5,7 @@ const Quiz = require('../models/Quiz');
 const Document = require('../models/Document');
 const Progress = require('../models/Progress');
 const Grade = require('../models/Grade');
+const QuizCategory = require('../models/QuizCategory');
 const { protect, authorize } = require('../middleware/auth');
 
 // All admin routes require authentication and admin role
@@ -103,6 +104,59 @@ router.delete('/grades/:id', async (req, res) => {
   try {
     await Grade.deleteById(req.params.id);
     res.json({ success: true, message: 'Đã xóa lớp' });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// ============================================================
+// QUIZ CATEGORIES — Admin quản lý danh mục loại đề
+// ============================================================
+// @GET /api/admin/quiz-categories
+router.get('/quiz-categories', async (req, res) => {
+  try {
+    const categories = await QuizCategory.findAll(false); // lấy cả ẩn
+    res.json({ success: true, data: categories });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @POST /api/admin/quiz-categories
+router.post('/quiz-categories', async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, message: 'Tên danh mục là bắt buộc' });
+    }
+    const category = await QuizCategory.create({ name: name.trim(), description });
+    res.status(201).json({ success: true, data: category });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @PUT /api/admin/quiz-categories/:id
+router.put('/quiz-categories/:id', async (req, res) => {
+  try {
+    const { name, description, isActive } = req.body;
+    if (!name || !name.trim()) {
+      return res.status(400).json({ success: false, message: 'Tên danh mục là bắt buộc' });
+    }
+    const category = await QuizCategory.updateById(req.params.id, {
+      name: name.trim(), description, isActive
+    });
+    res.json({ success: true, data: category });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+// @DELETE /api/admin/quiz-categories/:id
+router.delete('/quiz-categories/:id', async (req, res) => {
+  try {
+    await QuizCategory.deleteById(req.params.id);
+    res.json({ success: true, message: 'Đã xóa danh mục' });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }

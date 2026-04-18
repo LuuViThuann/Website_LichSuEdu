@@ -21,7 +21,7 @@
   --radius: 12px;
   --radius-lg: 20px;
   --font-body: 'Be Vietnam Pro', sans-serif;
-  --font-display: 'Playfair Display', serif;
+  --font-display: 'Be Vietnam Pro', sans-serif;
 }
 
 *,
@@ -197,6 +197,7 @@ select {
 .section-title {
   font-family: var(--font-display);
   font-size: 2rem;
+  font-weight: 800;
   color: var(--text-primary);
   margin-bottom: 8px;
 }
@@ -344,4 +345,19 @@ select {
 .page-wrapper {
   min-height: calc(100vh - 70px);
   padding: 40px 0 80px;
+}
+
+/* Sidebar 3:9 layout — responsive */
+@media (max-width: 900px) {
+  /* Stack sidebar above content on tablet */
+  [style*="gridTemplateColumns: '3fr 9fr'"],
+  [style*='gridTemplateColumns: "3fr 9fr"'] {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* Sidebar button hover effect */
+aside button:hover {
+  opacity: 0.85;
+  transform: translateX(2px);
 }

@@ -2,19 +2,23 @@ const { getPool, sql } = require('../config/database');
 
 const Quiz = {
   // Lấy danh sách quiz (không kèm questions, có phân trang)
-  async findAll({ grade, difficulty, page = 1, limit = 12 } = {}) {
+  async findAll({ grade, difficulty, categoryId, page = 1, limit = 12 } = {}) {
     const pool = getPool();
     const offset = (page - 1) * limit;
-    let where = "WHERE isPublished = 1";
+    let where = "WHERE q.isPublished = 1";
     const request = pool.request();
 
     if (grade) {
-      where += " AND grade = @grade";
+      where += " AND q.grade = @grade";
       request.input('grade', sql.NVarChar(10), grade);
     }
     if (difficulty) {
-      where += " AND difficulty = @difficulty";
+      where += " AND q.difficulty = @difficulty";
       request.input('difficulty', sql.NVarChar(10), difficulty);
+    }
+    if (categoryId) {
+      where += " AND q.categoryId = @categoryId";
+      request.input('categoryId', sql.Int, Number(categoryId));
     }
 
     request.input('limit', sql.Int, Number(limit));
@@ -24,15 +28,20 @@ const Quiz = {
     const countReq = pool.request();
     if (grade) countReq.input('grade', sql.NVarChar(10), grade);
     if (difficulty) countReq.input('difficulty', sql.NVarChar(10), difficulty);
-    const countRes = await countReq.query(`SELECT COUNT(*) AS total FROM Quizzes ${where}`);
+    if (categoryId) countReq.input('categoryId', sql.Int, Number(categoryId));
+    const countRes = await countReq.query(`SELECT COUNT(*) AS total FROM Quizzes q ${where}`);
     const total = countRes.recordset[0].total;
 
     const result = await request.query(`
-      SELECT id, title, description, grade, subject, difficulty, sourceUrl,
-             thumbnail, totalQuestions, duration, isPublished, attempts,
-             createdBy, createdAt, updatedAt
-      FROM Quizzes ${where}
-      ORDER BY createdAt DESC
+      SELECT q.id, q.title, q.description, q.grade, q.subject, q.difficulty,
+             q.categoryId, c.name AS categoryName,
+             q.sourceUrl, q.thumbnail, q.thumbnailPublicId,
+             q.totalQuestions, q.duration, q.isPublished, q.attempts,
+             q.createdBy, q.createdAt, q.updatedAt
+      FROM Quizzes q
+      LEFT JOIN QuizCategories c ON q.categoryId = c.id
+      ${where}
+      ORDER BY q.createdAt DESC
       OFFSET @offset ROWS FETCH NEXT @limit ROWS ONLY
     `);
 
@@ -44,7 +53,12 @@ const Quiz = {
     const pool = getPool();
     const quizResult = await pool.request()
       .input('id', sql.Int, id)
-      .query('SELECT * FROM Quizzes WHERE id = @id');
+      .query(`
+        SELECT q.*, c.name AS categoryName
+        FROM Quizzes q
+        LEFT JOIN QuizCategories c ON q.categoryId = c.id
+        WHERE q.id = @id
+      `);
 
     if (!quizResult.recordset[0]) return null;
     const quiz = quizResult.recordset[0];
@@ -71,7 +85,8 @@ const Quiz = {
 
   // Tạo quiz mới (kèm questions)
   async create({ title, description = '', grade = 'mixed', subject = 'Lịch sử',
-    difficulty = 'medium', sourceUrl = '', thumbnail = '', duration = 45,
+    difficulty = 'medium', categoryId = null, sourceUrl = '',
+    thumbnail = '', thumbnailPublicId = '', duration = 45,
     isPublished = true, questions = [], createdBy }) {
     const pool = getPool();
 
@@ -82,20 +97,24 @@ const Quiz = {
       .input('grade', sql.NVarChar(10), grade)
       .input('subject', sql.NVarChar(100), subject)
       .input('difficulty', sql.NVarChar(10), difficulty)
+      .input('categoryId', sql.Int, categoryId ? Number(categoryId) : null)
       .input('sourceUrl', sql.NVarChar(sql.MAX), sourceUrl)
       .input('thumbnail', sql.NVarChar(sql.MAX), thumbnail)
+      .input('thumbnailPublicId', sql.NVarChar(500), thumbnailPublicId)
       .input('totalQuestions', sql.Int, questions.length)
       .input('duration', sql.Int, duration)
       .input('isPublished', sql.Bit, isPublished ? 1 : 0)
       .input('createdBy', sql.Int, createdBy || null)
       .query(`
         INSERT INTO Quizzes
-          (title, description, grade, subject, difficulty, sourceUrl, thumbnail,
-           totalQuestions, duration, isPublished, attempts, createdBy, createdAt, updatedAt)
+          (title, description, grade, subject, difficulty, categoryId, sourceUrl, thumbnail,
+           thumbnailPublicId, totalQuestions, duration, isPublished, attempts, createdBy,
+           createdAt, updatedAt)
         OUTPUT INSERTED.*
         VALUES
-          (@title, @description, @grade, @subject, @difficulty, @sourceUrl, @thumbnail,
-           @totalQuestions, @duration, @isPublished, 0, @createdBy, GETDATE(), GETDATE())
+          (@title, @description, @grade, @subject, @difficulty, @categoryId, @sourceUrl,
+           @thumbnail, @thumbnailPublicId, @totalQuestions, @duration, @isPublished,
+           0, @createdBy, GETDATE(), GETDATE())
       `);
 
     const quiz = quizResult.recordset[0];
@@ -130,8 +149,8 @@ const Quiz = {
   // Cập nhật quiz
   async updateById(id, data) {
     const pool = getPool();
-    const { title, description, grade, subject, difficulty, sourceUrl,
-      thumbnail, duration, isPublished, questions } = data;
+    const { title, description, grade, subject, difficulty, categoryId,
+      sourceUrl, thumbnail, thumbnailPublicId, duration, isPublished, questions } = data;
 
     await pool.request()
       .input('id', sql.Int, id)
@@ -140,15 +159,18 @@ const Quiz = {
       .input('grade', sql.NVarChar(10), grade)
       .input('subject', sql.NVarChar(100), subject)
       .input('difficulty', sql.NVarChar(10), difficulty)
+      .input('categoryId', sql.Int, categoryId ? Number(categoryId) : null)
       .input('sourceUrl', sql.NVarChar(sql.MAX), sourceUrl || '')
       .input('thumbnail', sql.NVarChar(sql.MAX), thumbnail || '')
+      .input('thumbnailPublicId', sql.NVarChar(500), thumbnailPublicId || '')
       .input('totalQuestions', sql.Int, questions ? questions.length : 0)
       .input('duration', sql.Int, duration)
       .input('isPublished', sql.Bit, isPublished ? 1 : 0)
       .query(`
         UPDATE Quizzes SET
           title=@title, description=@description, grade=@grade, subject=@subject,
-          difficulty=@difficulty, sourceUrl=@sourceUrl, thumbnail=@thumbnail,
+          difficulty=@difficulty, categoryId=@categoryId, sourceUrl=@sourceUrl,
+          thumbnail=@thumbnail, thumbnailPublicId=@thumbnailPublicId,
           totalQuestions=@totalQuestions, duration=@duration, isPublished=@isPublished,
           updatedAt=GETDATE()
         WHERE id=@id

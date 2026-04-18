@@ -4,5 +4,17 @@ npm run dev
 cd d:\TT-DNC\WebHocLishSu_Edu\frontend
 npm run dev
 
+* GROQ_MODEL   = "llama-3.3-70b-versatile"
 ---------------------
 
+* DANH MỤC HIỂN THỊ : 
+
+1. TRANG CHÍNH : 3 MỤC 
+- ĐỀ THI TỐT NGHIỆP LỊCH SỬ 
+- TÀI LIỆU LỊCH SỬ HAY 
+
+
+
+---------
+
+* THÊM NỘI DUNG BÀI HỌC : HIỂN THỊ NHƯ CHUYÊN ĐỀ ÔN TẬP , TÓM TẮT BÀI HỌC , ....
