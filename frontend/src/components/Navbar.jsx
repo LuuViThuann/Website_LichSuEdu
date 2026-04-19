@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
   FiBook, FiClipboard, FiHome, FiLogIn, FiLogOut,
-  FiUser, FiMenu, FiX, FiSettings, FiBarChart2
+  FiUser, FiMenu, FiX, FiSettings, FiBarChart2, FiBookOpen
 } from 'react-icons/fi';
 
 export default function Navbar() {
@@ -25,6 +25,7 @@ export default function Navbar() {
   const navLinks = [
     { to: '/', label: 'Trang chủ', icon: <FiHome /> },
     { to: '/library', label: 'Thư viện', icon: <FiBook /> },
+    { to: '/lessons', label: 'Bài học', icon: <FiBookOpen /> }, // [MỚI]
     { to: '/quiz', label: 'Kiểm tra', icon: <FiClipboard /> },
   ];
 

@@ -77,4 +77,22 @@ export const createQuizCategory = (data) => API.post('/admin/quiz-categories', d
 export const updateQuizCategory = (id, data) => API.put(`/admin/quiz-categories/${id}`, data);
 export const deleteQuizCategory = (id) => API.delete(`/admin/quiz-categories/${id}`);
 
+// ── [MỚI] Lessons (Public) ──────────────────────────────────────
+export const getLessonsTree = (grade) => API.get('/lessons', { params: { grade } });
+export const getLessonTopics = (grade) => API.get('/lessons/topics', { params: { grade } });
+export const getLesson = (id) => API.get(`/lessons/${id}`);
+
+// ── [MỚI] Admin Lessons (CRUD) ──────────────────────────────────
+export const getAdminLessonTopics = (grade) => API.get('/admin/lesson-topics', { params: { grade } });
+export const createLessonTopic = (data) => API.post('/admin/lesson-topics', data);
+export const updateLessonTopic = (id, data) => API.put(`/admin/lesson-topics/${id}`, data);
+export const deleteLessonTopic = (id) => API.delete(`/admin/lesson-topics/${id}`);
+
+export const getAdminLessons = (params) => API.get('/admin/lessons', { params });
+export const getAdminLesson = (id) => API.get(`/admin/lessons/${id}`);
+export const createLesson = (data) => API.post('/admin/lessons', data);
+export const updateLesson = (id, data) => API.put(`/admin/lessons/${id}`, data);
+export const deleteLesson = (id) => API.delete(`/admin/lessons/${id}`);
+export const importLessons = (data) => API.post('/admin/lessons/import', data);
+
 export default API;

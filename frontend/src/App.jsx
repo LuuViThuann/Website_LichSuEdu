@@ -11,6 +11,8 @@ import BookReader from './pages/BookReader';
 import QuizList from './pages/QuizList';
 import QuizDetail from './pages/QuizDetail';
 import MyProgress from './pages/MyProgress';
+import Lessons from './pages/Lessons';           // [MỚI]
+import LessonDetail from './pages/LessonDetail'; // [MỚI]
 
 // Admin pages
 import AdminDashboard from './pages/admin/Dashboard';
@@ -19,6 +21,8 @@ import AdminDocuments from './pages/admin/ManageDocuments';
 import AdminUsers from './pages/admin/ManageUsers';
 import AdminGrades from './pages/admin/ManageGrades';
 import AdminQuizCategories from './pages/admin/ManageQuizCategories';
+import AdminLessons from './pages/admin/ManageLessons';
+import AdminLessonCategories from './pages/admin/ManageLessonCategories';
 
 const ProtectedRoute = ({ children, adminOnly = false }) => {
   const { user, loading } = useAuth();
@@ -41,6 +45,9 @@ export default function App() {
         <Route path="/quiz" element={<QuizList />} />
         <Route path="/quiz/:id" element={<ProtectedRoute><QuizDetail /></ProtectedRoute>} />
         <Route path="/progress" element={<ProtectedRoute><MyProgress /></ProtectedRoute>} />
+        {/* [MỚI] Bài học */}
+        <Route path="/lessons" element={<Lessons />} />
+        <Route path="/lessons/:id" element={<LessonDetail />} />
         {/* Admin */}
         <Route path="/admin" element={<ProtectedRoute adminOnly><AdminDashboard /></ProtectedRoute>} />
         <Route path="/admin/quiz" element={<ProtectedRoute adminOnly><AdminQuiz /></ProtectedRoute>} />
@@ -48,6 +55,9 @@ export default function App() {
         <Route path="/admin/documents" element={<ProtectedRoute adminOnly><AdminDocuments /></ProtectedRoute>} />
         <Route path="/admin/users" element={<ProtectedRoute adminOnly><AdminUsers /></ProtectedRoute>} />
         <Route path="/admin/grades" element={<ProtectedRoute adminOnly><AdminGrades /></ProtectedRoute>} />
+        {/* Admin Quản lý bài học */}
+        <Route path="/admin/lesson-categories" element={<ProtectedRoute adminOnly><AdminLessonCategories /></ProtectedRoute>} />
+        <Route path="/admin/lessons" element={<ProtectedRoute adminOnly><AdminLessons /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
       <Toaster position="top-right" toastOptions={{

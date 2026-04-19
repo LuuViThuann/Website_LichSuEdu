@@ -28,6 +28,7 @@ app.use('/api/grades', require('./routes/grades')); // Public - lấy danh sách
 app.use('/api/quiz-categories', require('./routes/quizCategories')); // Public - danh mục loại đề
 app.use('/api/quizzes', require('./routes/quiz'));
 app.use('/api/documents', require('./routes/documents'));
+app.use('/api/lessons', require('./routes/lessons')); // [MỚI] Public - bài học
 app.use('/api/admin', require('./routes/admin'));
 
 // Health check

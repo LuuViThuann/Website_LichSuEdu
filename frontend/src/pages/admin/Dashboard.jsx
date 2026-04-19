@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { getAdminStats } from '../../services/api';
 import AdminLayout from './AdminLayout';
-import { FiUsers, FiClipboard, FiBook, FiTarget } from 'react-icons/fi';
+import { FiUsers, FiClipboard, FiBook, FiTarget, FiBookOpen } from 'react-icons/fi'; // [SỬA] +FiBookOpen
 
 export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
@@ -16,6 +16,8 @@ export default function AdminDashboard() {
     { label: 'Bộ đề thi', value: stats.totalQuizzes, icon: <FiClipboard />, color: 'var(--accent)', bg: '#FFF3E0' },
     { label: 'Tài liệu', value: stats.totalDocuments, icon: <FiBook />, color: 'var(--success)', bg: '#E8F5E9' },
     { label: 'Lượt làm bài', value: stats.totalAttempts, icon: <FiTarget />, color: '#7B1FA2', bg: '#F3E5F5' },
+    // [MỚI] - Card bài học
+    { label: 'Bài học', value: stats.totalLessons ?? 0, icon: <FiBookOpen />, color: '#00695C', bg: '#E0F2F1' },
   ] : [];
 
   return (
@@ -24,8 +26,8 @@ export default function AdminDashboard() {
         <div className="page-loading"><div className="spinner" /></div>
       ) : (
         <>
-          {/* Stat cards */}
-          <div className="grid-4" style={{ marginBottom: 32 }}>
+          {/* Stat cards - [SỬA] dùng grid-5 để vừa 5 card */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))', gap: 16, marginBottom: 32 }}>
             {CARDS.map(c => (
               <div key={c.label} style={{
                 background: 'white', borderRadius: 14, border: '1px solid var(--border)',

@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
   FiHome, FiClipboard, FiBook, FiUsers, FiBarChart2,
-  FiLogOut, FiChevronRight, FiLayers, FiTag
+  FiLogOut, FiChevronRight, FiLayers, FiTag, FiBookOpen, FiList
 } from 'react-icons/fi';
 
 const NAV = [
@@ -10,9 +10,13 @@ const NAV = [
   { to: '/admin/quiz', label: 'Quản lý đề thi', icon: <FiClipboard /> },
   { to: '/admin/quiz-categories', label: 'Danh mục đề', icon: <FiTag /> },
   { to: '/admin/documents', label: 'Quản lý tài liệu', icon: <FiBook /> },
+  // Nhóm bài học
+  { to: '/admin/lesson-categories', label: 'Danh mục bài học', icon: <FiList /> },
+  { to: '/admin/lessons', label: 'Quản lý bài học', icon: <FiBookOpen /> },
   { to: '/admin/users', label: 'Quản lý người dùng', icon: <FiUsers /> },
   { to: '/admin/grades', label: 'Quản lý lớp học', icon: <FiLayers /> },
 ];
+
 
 export default function AdminLayout({ children, title }) {
   const { logout, user } = useAuth();
